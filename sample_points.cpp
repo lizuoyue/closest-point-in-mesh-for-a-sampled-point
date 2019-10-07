@@ -17,8 +17,10 @@ template <typename Derived>
 void writeMatrixInt(std::ofstream &io, Eigen::MatrixBase<Derived> &mat) {
 	int rows = mat.rows();
 	int cols = mat.cols();
+	int datatype = 0; // int
 	io.write((char *)(&rows), sizeof(rows));
 	io.write((char *)(&cols), sizeof(cols));
+	io.write((char *)(&datatype), sizeof(datatype));
 
 	int num_elems = mat.rows() * mat.cols();
 	int *data = new int[num_elems];
@@ -39,8 +41,10 @@ template <typename Derived>
 void writeMatrixFloat(std::ofstream &io, Eigen::MatrixBase<Derived> &mat, bool sqrt) {
 	int rows = mat.rows();
 	int cols = mat.cols();
+	int datatype = 1; // float
 	io.write((char *)(&rows), sizeof(rows));
 	io.write((char *)(&cols), sizeof(cols));
+	io.write((char *)(&datatype), sizeof(datatype));
 
 	int num_elems = mat.rows() * mat.cols();
 	float *data = new float[num_elems];
