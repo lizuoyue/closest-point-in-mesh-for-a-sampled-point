@@ -198,6 +198,7 @@ int main(int argc, char** argv) {
 	// std::cout << "\nPress ENTER to continue.";
 	// std::cin.ignore();
 	// std::cout << "ENTER pressed.\n";
+	return 0;
 
 	float x_pad, y_pad, z_pad;
 	if (padding <= 0) {
