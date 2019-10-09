@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
 	// Parse arguments
 	std::string line_break = "\n                           ";
 	ArgumentParser parser("Argument parser example");
-	parser.add_argument("-d", "--density", "int/float" + line_break + 
+	parser.add_argument("-d", "--density", "int/float" + line_break +
 										   "if > 0, number of sampling points PER UNIT VOLUME" + line_break +
 										   "if < 0, total number of sampling points (absolute value)" + line_break, true);
 	parser.add_argument("-f", "--file", "string, filename (.ply) of the input mesh" + line_break, true);
@@ -88,6 +88,8 @@ int main(int argc, char** argv) {
 	parser.add_argument("-s", "--seed", "int, seed of random number generator" + line_break +
 										"default: 7", false);
 	parser.add_argument("-v", "--visualize", "int, number of points to visualize" + line_break +
+											 "if > 0, number of visualized points PER UNIT VOLUME" + line_break +
+											 "if < 0, total number of visualized points (absolute value)" + line_break +
 											 "default: 0", false);
 	try {
 		parser.parse(argc, argv);
@@ -273,7 +275,12 @@ int main(int argc, char** argv) {
 	elapsed_secs = double(t_end - t_beg) / 1000000;
 	std::cout << "Wrting to file takes " << elapsed_secs << " seconds." << std::endl;
 
-	if (vis > 0) {
+	if (vis != 0) {
+		if (vis > 0) {
+			vis = std::ceil(volume * vis);
+		} else {
+			vis = -vis;
+		}
 		std::vector<float> xxx, yyy, zzz;
 		for (int i = 0; i < vis; ++i) {
 			xxx.push_back(P(i, 0));
