@@ -4,7 +4,8 @@ for SCENE_NAME in $(ls ${MESH_ROOT})
 do
 	MESH_FILE=${MESH_ROOT}${SCENE_NAME}"/mesh.ply"
 	mkdir -p ${SCENE_NAME}
+	echo "==========================="
 	echo ${SCENE_NAME}
-	echo ${MESH_FILE}
 	./sample_points -f ${MESH_FILE} -d 3000 -o ${SCENE_NAME} -p 0.05 -v 10
+	echo "==========================="
 done
