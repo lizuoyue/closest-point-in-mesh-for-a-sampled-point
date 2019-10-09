@@ -14,21 +14,16 @@
 #include <cmath>
 
 template <typename Derived>
-void writeMatrixInt(std::ofstream &io, Eigen::MatrixBase<Derived> &mat) {
-	int rows = mat.rows();
-	int cols = mat.cols();
-	int datatype = 0; // int
-	io.write((char *)(&rows), sizeof(rows));
-	io.write((char *)(&cols), sizeof(cols));
-	io.write((char *)(&datatype), sizeof(datatype));
-
+void writeMatrixInt(std::ofstream &io, Eigen::MatrixBase<Derived> &mat, bool half_idx) {
 	int num_elems = mat.rows() * mat.cols();
 	int *data = new int[num_elems];
 	int idx = 0;
 	for (int i = 0; i < mat.rows(); ++i) {
 		for (int j = 0; j < mat.cols(); ++j) {
 			data[idx] = mat(i, j);
-			data[idx] /= 2;
+			if (half_idx) {
+				data[idx] /= 2;
+			}
 			++idx;
 		}
 	}
@@ -38,21 +33,14 @@ void writeMatrixInt(std::ofstream &io, Eigen::MatrixBase<Derived> &mat) {
 }
 
 template <typename Derived>
-void writeMatrixFloat(std::ofstream &io, Eigen::MatrixBase<Derived> &mat, bool sqrt) {
-	int rows = mat.rows();
-	int cols = mat.cols();
-	int datatype = 1; // float
-	io.write((char *)(&rows), sizeof(rows));
-	io.write((char *)(&cols), sizeof(cols));
-	io.write((char *)(&datatype), sizeof(datatype));
-
+void writeMatrixFloat(std::ofstream &io, Eigen::MatrixBase<Derived> &mat, bool sqrt_val) {
 	int num_elems = mat.rows() * mat.cols();
 	float *data = new float[num_elems];
 	int idx = 0;
 	for (int i = 0; i < mat.rows(); ++i) {
 		for (int j = 0; j < mat.cols(); ++j) {
 			data[idx] = mat(i, j);
-			if (sqrt) {
+			if (sqrt_val) {
 				data[idx] = std::sqrt(data[idx]);
 			}
 			++idx;
@@ -63,17 +51,20 @@ void writeMatrixFloat(std::ofstream &io, Eigen::MatrixBase<Derived> &mat, bool s
 	return;
 }
 
-void writeToFile(std::string filename,
-				 Eigen::MatrixXd &point,
-				 Eigen::MatrixXd &closest_point,
-				 Eigen::VectorXd &squared_distance,
-				 Eigen::VectorXi &face_index) {
-
+template <typename Derived>
+void writeMatToFile(
+	std::string filename,
+	Eigen::MatrixBase<Derived> &mat,
+	bool is_int,
+	bool half_idx = false,
+	bool sqrt_val = false
+) {
 	std::ofstream bio(filename.c_str(), std::ios::binary);
-	writeMatrixFloat(bio, point, false);
-	writeMatrixFloat(bio, closest_point, false);
-	writeMatrixFloat(bio, squared_distance, true);
-	writeMatrixInt(bio, face_index);
+	if (is_int) {
+		writeMatrixInt(bio, mat, half_idx);
+	} else {
+		writeMatrixFloat(bio, mat, sqrt_val);
+	}
 	bio.close();
 	return;
 }
@@ -87,7 +78,7 @@ int main(int argc, char** argv) {
 										   "if > 0, number of sampling points PER UNIT VOLUME" + line_break +
 										   "if < 0, total number of sampling points (absolute value)" + line_break, true);
 	parser.add_argument("-f", "--file", "string, filename (.ply) of the input mesh" + line_break, true);
-	parser.add_argument("-o", "--output", "string, filename (.dat) of the output data" + line_break, true);
+	parser.add_argument("-o", "--output", "string, prefix of the output (.dat) filename" + line_break, true);
 	parser.add_argument("-p", "--padding", "float, padding size of the bounding" + line_break +
 										   "box where the point is sampling" + line_break +
 										   "if > 0, relative padding, +-padding * dim_size" + line_break +
@@ -96,6 +87,8 @@ int main(int argc, char** argv) {
 										   "default: 0", false);
 	parser.add_argument("-s", "--seed", "int, seed of random number generator" + line_break +
 										"default: 7", false);
+	parser.add_argument("-v", "--visualize", "int, number of points to visualize" + line_break +
+											 "default: 0", false);
 	try {
 		parser.parse(argc, argv);
 	} catch (const ArgumentParser::ArgumentNotFound& ex) {
@@ -123,6 +116,12 @@ int main(int argc, char** argv) {
 		seed = parser.get<int>("s");
 	} else {
 		seed = 7;
+	}
+	int vis;
+	if (parser.exists("v")) {
+		vis = parser.get<int>("v");
+	} else {
+		vis = 0;
 	}
 
 	/*
@@ -256,54 +255,59 @@ int main(int argc, char** argv) {
 
 	//
 	t_beg = std::clock();
-	Eigen::VectorXd squaredD;
+	Eigen::VectorXd D;
 	Eigen::VectorXi I;
 	Eigen::MatrixXd C;
-	tree.squared_distance(V, F, P, squaredD, I, C);
+	tree.squared_distance(V, F, P, D, I, C);
 	t_end = std::clock();
 	elapsed_secs = double(t_end - t_beg) / 1000000;
 	std::cout << "Calculation takes " << elapsed_secs << " seconds for " << num_points << " points." << std::endl;
 
-	//
+	////////////////////////////////////////// is_int, half_idx, sqrt_val
 	t_beg = std::clock();
-	writeToFile(outfile, P, C, squaredD, I);
+	writeMatToFile(outfile + "_points.dat", P, false, false, false);
+	writeMatToFile(outfile + "_dist_to_mesh.dat", D, false, false, true);
+	writeMatToFile(outfile + "_nearest_point.dat", C, false, false, false);
+	writeMatToFile(outfile + "_points.dat", I, true, true, false);
 	t_end = std::clock();
 	elapsed_secs = double(t_end - t_beg) / 1000000;
 	std::cout << "Wrting to file takes " << elapsed_secs << " seconds." << std::endl;
 
-	std::vector<float> xxx, yyy, zzz;
-	for (int i = 0; i < num_points; ++i) {
-		xxx.push_back(P(i, 0));
-		yyy.push_back(P(i, 1));
-		zzz.push_back(P(i, 2));
-		xxx.push_back(C(i, 0));
-		yyy.push_back(C(i, 1));
-		zzz.push_back(C(i, 2));
-		xxx.push_back(C(i, 0));
-		yyy.push_back(C(i, 1));
-		zzz.push_back(C(i, 2));
+	if (vis > 0) {
+		std::vector<float> xxx, yyy, zzz;
+		for (int i = 0; i < vis; ++i) {
+			xxx.push_back(P(i, 0));
+			yyy.push_back(P(i, 1));
+			zzz.push_back(P(i, 2));
+			xxx.push_back(C(i, 0));
+			yyy.push_back(C(i, 1));
+			zzz.push_back(C(i, 2));
+			xxx.push_back(C(i, 0));
+			yyy.push_back(C(i, 1));
+			zzz.push_back(C(i, 2));
+		}
+		std::vector< std::vector<int> > fff(vis, std::vector<int>(3, 0));
+		for (int i = 0; i < vis; ++i) {
+			fff[i][0] = i * 3;
+			fff[i][1] = i * 3 + 1;
+			fff[i][2] = i * 3 + 2;
+		}
+
+		happly::PLYData plyOut;
+
+		// Add elements
+		plyOut.addElement("vertex", vis * 3);
+		plyOut.addElement("face", vis);
+
+		// Add properties to those elements
+		plyOut.getElement("vertex").addProperty<float>("x", xxx);
+		plyOut.getElement("vertex").addProperty<float>("y", yyy);
+		plyOut.getElement("vertex").addProperty<float>("z", zzz);
+		plyOut.getElement("face").addListProperty<int>("vertex_indices", fff);
+
+		// Write the object to file
+		plyOut.write(outfile + "_for_vis.ply", happly::DataFormat::Binary);
 	}
-	std::vector< std::vector<int> > fff(num_points, std::vector<int>(3, 0));
-	for (int i = 0; i < num_points; ++i) {
-		fff[i][0] = i * 3;
-		fff[i][1] = i * 3 + 1;
-		fff[i][2] = i * 3 + 2;
-	}
-
-	happly::PLYData plyOut;
-
-	// Add elements
-	plyOut.addElement("vertex", num_points * 3);
-	plyOut.addElement("face", num_points);
-
-	// Add properties to those elements
-	plyOut.getElement("vertex").addProperty<float>("x", xxx);
-	plyOut.getElement("vertex").addProperty<float>("y", yyy);
-	plyOut.getElement("vertex").addProperty<float>("z", zzz);
-	plyOut.getElement("face").addListProperty<int>("vertex_indices", fff);
-
-	// Write the object to file
-	plyOut.write(outfile.substr(0, outfile.length() - 4) + "_for_vis.ply", happly::DataFormat::Binary);
 
 	return 0;
 
