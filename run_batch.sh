@@ -1,5 +1,5 @@
 g++ -std=c++11 sample_points.cpp -o sample_points -lpthread
-MESH_ROOT="../Replica-Dataset/replica_v1/hotel*"
+MESH_ROOT="../Replica-Dataset/replica_v1/"
 for SCENE_NAME in $(ls ${MESH_ROOT})
 do
 	MESH_FILE=${MESH_ROOT}${SCENE_NAME}"/mesh.ply"
