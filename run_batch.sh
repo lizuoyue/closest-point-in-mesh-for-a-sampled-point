@@ -6,5 +6,5 @@ do
 	mkdir -p ${SCENE_NAME}
 	echo ${SCENE_NAME}
 	echo ${MESH_FILE}
-	./sample_points -f ${MESH_FILE} -d 5000 -o ${SCENE_NAME} -p 0.05 -v 10
+	./sample_points -f ${MESH_FILE} -d 3000 -o ${SCENE_NAME} -p 0.05 -v 10
 done
