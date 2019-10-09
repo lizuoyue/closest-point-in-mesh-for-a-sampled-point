@@ -1,10 +1,11 @@
 g++ -std=c++11 sample_points.cpp -o sample_points -lpthread
-for MESH_FOLDER in $(ls '../Replica-Dataset/replica_v1/')
+MESH_ROOT="../Replica-Dataset/replica_v1/"
+for SCENE_NAME in $(ls ${MESH_ROOT})
 do
-	MESH_FILE=${MESH_FOLDER}"/mesh.ply"
-	SCENE_NAME="scene_"$(basename ${MESH_FOLDER})
-	mkdir ${SCENE_NAME}
+	MESH_FILE=${MESH_ROOT}${SCENE_NAME}"/mesh.ply"
+	mkdir -p ${SCENE_NAME}
 	echo ${MESH_FILE}
 	echo ${SCENE_NAME}
+	continue
 	./sample_points -f ${MESH_FILE} -d 5000 -o ${SCENE_NAME} -p 0.05 -v 10
 done
