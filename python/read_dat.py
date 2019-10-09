@@ -35,5 +35,5 @@ for i in range(5):
 	print('distance: ', dist[i])
 	print('l2dist:   ', l2dist(points[i], c_points[i]))
 	print('face id:  ', fid[i])
-	common(c_points[i], mesh_face[fid[i]])
+	common(c_points[i], [mesh_vertex[pid] for pid in mesh_face[fid[i]]])
 	print('============')
