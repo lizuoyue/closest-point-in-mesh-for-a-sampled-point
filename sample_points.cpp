@@ -191,7 +191,9 @@ int main(int argc, char** argv) {
 	std::cout << std::fixed << std::setprecision(5) << "x  " << x_min << "  " << x_max << "  " << x_diff << std::endl;
 	std::cout << std::fixed << std::setprecision(5) << "y  " << y_min << "  " << y_max << "  " << y_diff << std::endl;
 	std::cout << std::fixed << std::setprecision(5) << "z  " << z_min << "  " << z_max << "  " << z_diff << std::endl;
-	std::cout << std::fixed << std::setprecision(5) << "Volume: " << volume << std::endl;
+	std::cout << std::fixed << std::setprecision(5) << "Volume:             " << volume << std::endl;
+	std::cout << "Number of Vertices: " << x.size() << std::endl;
+	std::cout << "Number of Faces:    " << vertex_indices.size() << std::endl;
 	std::cout << std::fixed << "Totally " << num_points << " points will be sampled." << std::endl;
 	// std::cout << "\nPress ENTER to continue.";
 	// std::cin.ignore();
