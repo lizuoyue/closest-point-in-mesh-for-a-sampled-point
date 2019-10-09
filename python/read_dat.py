@@ -6,11 +6,12 @@ def l2dist(p1, p2):
 	return np.sqrt(diff.dot(diff))
 
 def common(p, li):
-	l = np.array([list(item[:3] + (1,)) for item in li])
+	l = [[item[0], item[1], item[2], 1] for item in li]
+	l = np.array(l)
 	print(np.linalg.det(l))
 	for i in range(4):
 		lc = l.copy()
-		lc[i] = p
+		lc[i, :3] = p
 		print(np.linalg.det(lc))
 
 
@@ -35,5 +36,5 @@ for i in range(5):
 	print('distance: ', dist[i])
 	print('l2dist:   ', l2dist(points[i], c_points[i]))
 	print('face id:  ', fid[i])
-	common(c_points[i], [mesh_vertex[pid] for pid in mesh_face[fid[i]]])
+	common(c_points[i], [mesh_vertex[mesh_face[fid[i]]][j] for j in range(4)])
 	print('============')
