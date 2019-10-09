@@ -15,7 +15,7 @@ print(c_points.shape)
 print(dist.shape)
 print(fid.shape)
 
-plydata = PlyData.read('my_output_file.ply')
+plydata = PlyData.read('../../Replica-Dataset/replica_v1/hotel_0/mesh.ply')
 mesh_vertex = plydata.elements[0].data
 mesh_face = plydata.elements[1].data
 
