@@ -3,11 +3,11 @@ import os, glob
 import numpy as np
 from plyfile import PlyData, PlyElement
 
-def almost0(num, t=1e-3):
-	print(num)
+def almost0(num, t=1e-6):
 	if np.abs(num) <= t:
 		return True
 	else:
+		print(num)
 		return False
 
 def l2dist(p1, p2):
@@ -36,6 +36,7 @@ for folder in folders:
 	assert(points.shape[0] == fid.shape[0])
 
 	scene_name = os.path.basename(folder).replace('scene_', '')
+	print(scene_name)
 
 	plydata = PlyData.read('../../Replica-Dataset/replica_v1/%s/habitat/mesh_semantic.ply' % scene_name)
 	mesh_vertex = plydata.elements[0].data
