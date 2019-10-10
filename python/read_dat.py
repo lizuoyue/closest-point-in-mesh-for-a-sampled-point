@@ -47,5 +47,23 @@ for folder in folders:
 		common(c_points[i], mesh_vertex[mesh_face[fid[i]][0]])
 		ins_id[i] = mesh_face[fid[i]][1]
 
+	d = {
+		'point_coordinate': points,
+		'nearest_point_in_mesh': c_points,
+		'distance_to_mesh': dist,
+		'nearest_face_index': fid,
+		'nearest_instance_index': ins_id,
+	}
 
+	print(ins_id)
+
+	np.save('%s.npy' % scene_name, d) 
+
+	# Load
+	# d = np.load('%s.npy' % scene_name).item()
+	# d['point_coordinate']
+	# d['nearest_point_in_mesh']
+	# d['distance_to_mesh']
+	# d['nearest_face_index']
+	# d['nearest_instance_index']
 
