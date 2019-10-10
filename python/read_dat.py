@@ -4,10 +4,10 @@ import numpy as np
 from plyfile import PlyData, PlyElement
 
 def almost0(num, t=1e-3):
+	print(num)
 	if np.abs(num) <= t:
 		return True
 	else:
-		print(num)
 		return False
 
 def l2dist(p1, p2):
@@ -16,12 +16,12 @@ def l2dist(p1, p2):
 
 def common(p, li):
 	l = np.array([[item[0], item[1], item[2], 1] for item in li])
-	s = [almost0(np.linalg.det(l))]
+	assert(almost0(np.linalg.det(l)))
 	for i in range(4):
 		lc = l.copy()
 		lc[i, :3] = p
-		s.append(np.linalg.det(lc))
-	return sum(s) == 5
+		assert(almost0(np.linalg.det(lc)))
+	return
 
 folders = glob.glob('../scene_*')
 for folder in folders:
@@ -30,10 +30,7 @@ for folder in folders:
 	dist = np.fromfile(folder + '/distance_to_mesh.dat', np.float32)
 	fid = np.fromfile(folder + '/nearest_face_index.dat', np.int32)
 	ins_id = fid.copy()
-	print(points.shape)
-	print(c_points.shape)
-	print(dist.shape)
-	print(fid.shape)
+
 	assert(points.shape[0] == c_points.shape[0])
 	assert(points.shape[0] == dist.shape[0])
 	assert(points.shape[0] == fid.shape[0])
@@ -46,10 +43,8 @@ for folder in folders:
 
 	for i in tqdm.tqdm(range(points.shape[0])):
 		assert(almost0(dist[i] - l2dist(points[i], c_points[i])))
-		print(mesh_vertex[mesh_face[fid[i]][0]])
-		assert(common(c_points[i], [mesh_vertex[mesh_face[fid[i]][0][]] for j in range(4)]))
-		input()
-		# ins_id[i] = 
+		common(c_points[i], mesh_vertex[mesh_face[fid[i]][0]])
+		ins_id[i] = mesh_face[fid[i]][1]
 
 
 
