@@ -3,7 +3,7 @@ import os, glob
 import numpy as np
 from plyfile import PlyData, PlyElement
 
-def almost0(num, t=1e-6):
+def almost0(num, t=1e-3):
 	if np.abs(num) <= t:
 		return True
 	else:
