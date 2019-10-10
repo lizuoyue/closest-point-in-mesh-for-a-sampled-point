@@ -55,8 +55,6 @@ for folder in folders:
 		'nearest_instance_index': ins_id,
 	}
 
-	print(ins_id)
-
 	np.save('%s.npy' % scene_name, d) 
 
 	# Load
