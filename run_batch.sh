@@ -8,5 +8,4 @@ do
 	echo ${SCENE_NAME}
 	./sample_points -f ${MESH_FILE} -d 3000 -o "scene_"${SCENE_NAME} -p 0.05 -v 10
 	echo "==========================="
-	break
 done
