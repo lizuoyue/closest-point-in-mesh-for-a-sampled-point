@@ -7,6 +7,7 @@ def almost0(num, t=1e-3):
 	if np.abs(num) <= t:
 		return True
 	else:
+		print(num)
 		return False
 
 def l2dist(p1, p2):
@@ -45,8 +46,8 @@ for folder in folders:
 
 	for i in tqdm.tqdm(range(points.shape[0])):
 		assert(almost0(dist[i] - l2dist(points[i], c_points[i])))
-		assert(common(c_points[i], [mesh_vertex[mesh_face[fid[i]]][j] for j in range(4)]))
 		print(mesh_face[fid[i]])
+		assert(common(c_points[i], [mesh_vertex[mesh_face[fid[i]]][j] for j in range(4)]))
 		input()
 		# ins_id[i] = 
 
