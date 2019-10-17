@@ -23,6 +23,13 @@ def common(p, li):
 		assert(almost0(np.linalg.det(lc)))
 	return
 
+def change_to_XZmY(points):
+	assert(points.shape[1] == 3)
+	p = points.copy()
+	p[:, 1] = points[:, 2]
+	p[:, 2] = -points[:, 1]
+	return p
+
 folders = glob.glob('../scene_*')
 for folder in folders:
 	points = np.fromfile(folder + '/point_coordinate.dat', np.float32).reshape((-1, 3))
@@ -46,6 +53,10 @@ for folder in folders:
 		assert(almost0(dist[i] - l2dist(points[i], c_points[i])))
 		common(c_points[i], mesh_vertex[mesh_face[fid[i]][0]])
 		ins_id[i] = mesh_face[fid[i]][1]
+
+	# Change XYZ
+	points = change_to_XZmY(points)
+	c_points = change_to_XZmY(c_points)
 
 	d = {
 		'point_coordinate': points,
