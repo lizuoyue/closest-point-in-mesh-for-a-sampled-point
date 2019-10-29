@@ -7,6 +7,6 @@ do
 	mkdir -p "./scannet/"${SCENE_NAME}
 	echo "==========================="
 	echo ${SCENE_NAME}
-	./sample_points -f ${MESH_FILE} -d 1000 -o "./scannet/"${SCENE_NAME} -p 0.05 -v 10
+	./sample_points_scannet -f ${MESH_FILE} -d 1000 -o "./scannet/"${SCENE_NAME} -p 0.05 -v 10
 	echo "==========================="
 done
