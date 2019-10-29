@@ -1,4 +1,4 @@
-g++ -std=c++11 sample_points.cpp -o sample_points -lpthread
+g++ -std=c++11 sample_points_scannet.cpp -o sample_points_scannet -lpthread
 MESH_ROOT="/media/root/data/ScanNet_v2_data/*/scene*2.ply"
 for MESH_FILE in $(ls ${MESH_ROOT})
 do
