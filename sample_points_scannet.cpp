@@ -266,10 +266,10 @@ int main(int argc, char** argv) {
 
 	////////////////////////////////////////// is_int, half_idx, sqrt_val
 	t_beg = std::clock();
-	writeMatToFile(outfile + "/point_coordinate.dat", P, false, false, false);
-	writeMatToFile(outfile + "/distance_to_mesh.dat", D, false, false, true);
+	writeMatToFile(outfile + "/point_coordinate.dat"     , P, false, false, false);
+	writeMatToFile(outfile + "/distance_to_mesh.dat"     , D, false, false, true );
 	writeMatToFile(outfile + "/nearest_point_in_mesh.dat", C, false, false, false);
-	writeMatToFile(outfile + "/nearest_face_index.dat", I, true, true, false);
+	writeMatToFile(outfile + "/nearest_face_index.dat"   , I, true , false, false);
 	t_end = std::clock();
 	elapsed_secs = double(t_end - t_beg) / 1000000;
 	std::cout << "Wrting to file takes " << elapsed_secs << " seconds." << std::endl;
