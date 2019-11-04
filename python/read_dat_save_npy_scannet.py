@@ -39,7 +39,8 @@ for folder in folders:
 
 	for i in tqdm.tqdm(range(points.shape[0])):
 		assert(almost0(dist[i] - l2dist(points[i], c_points[i])))
-		ins_id[i] = mesh_face[fid[i]][1]
+		print(mesh_face[fid[i]])
+		ins_id[i] = mesh_face[fid[i]]
 
 	d = {
 		'point_coordinate': points,
