@@ -14,7 +14,7 @@ def l2dist(p1, p2):
 	diff = p1 - p2
 	return np.sqrt(diff.dot(diff))
 
-folders = glob.glob('../scannet/scene_*')
+folders = glob.glob('../scannet/scene*')
 for folder in folders:
 	points = np.fromfile(folder + '/point_coordinate.dat', np.float32).reshape((-1, 3))
 	c_points = np.fromfile(folder + '/nearest_point_in_mesh.dat', np.float32).reshape((-1, 3))
